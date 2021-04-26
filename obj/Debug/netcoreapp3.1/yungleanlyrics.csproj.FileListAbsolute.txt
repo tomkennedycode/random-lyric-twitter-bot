@@ -1,0 +1,16 @@
+D:\Tom-s\Github\yungleanlyrics\bin\Debug\netcoreapp3.1\yungleanlyrics.exe
+D:\Tom-s\Github\yungleanlyrics\bin\Debug\netcoreapp3.1\yungleanlyrics.deps.json
+D:\Tom-s\Github\yungleanlyrics\bin\Debug\netcoreapp3.1\yungleanlyrics.runtimeconfig.json
+D:\Tom-s\Github\yungleanlyrics\bin\Debug\netcoreapp3.1\yungleanlyrics.runtimeconfig.dev.json
+D:\Tom-s\Github\yungleanlyrics\bin\Debug\netcoreapp3.1\yungleanlyrics.dll
+D:\Tom-s\Github\yungleanlyrics\bin\Debug\netcoreapp3.1\yungleanlyrics.pdb
+D:\Tom-s\Github\yungleanlyrics\obj\Debug\netcoreapp3.1\yungleanlyrics.csprojAssemblyReference.cache
+D:\Tom-s\Github\yungleanlyrics\obj\Debug\netcoreapp3.1\yungleanlyrics.AssemblyInfoInputs.cache
+D:\Tom-s\Github\yungleanlyrics\obj\Debug\netcoreapp3.1\yungleanlyrics.AssemblyInfo.cs
+D:\Tom-s\Github\yungleanlyrics\obj\Debug\netcoreapp3.1\yungleanlyrics.csproj.CoreCompileInputs.cache
+D:\Tom-s\Github\yungleanlyrics\obj\Debug\netcoreapp3.1\yungleanlyrics.dll
+D:\Tom-s\Github\yungleanlyrics\obj\Debug\netcoreapp3.1\yungleanlyrics.pdb
+D:\Tom-s\Github\yungleanlyrics\obj\Debug\netcoreapp3.1\yungleanlyrics.genruntimeconfig.cache
+D:\Tom-s\Github\yungleanlyrics\bin\Debug\netcoreapp3.1\IronWebScraper.dll
+D:\Tom-s\Github\yungleanlyrics\obj\Debug\netcoreapp3.1\yungleanlyrics.csproj.CopyComplete
+D:\Tom-s\Github\yungleanlyrics\bin\Debug\netcoreapp3.1\HtmlAgilityPack.dll
