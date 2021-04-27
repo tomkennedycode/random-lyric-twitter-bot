@@ -16,10 +16,13 @@ namespace yungleanlyrics.Services
         }
         public void Run ()
         {
-            string url = "https://www.azlyrics.com/lyrics/yunglean/sauron.html";
+            // Get list of songs
+            string url = "https://www.azlyrics.com/y/yunglean.html";
+            var listOfSongsHtml = _lyricScaper.CallUrl(url).Result;
+            var songUrl = _lyricScaper.GetSongLink(listOfSongsHtml);
 
             //Scrap the urls
-            var response = _lyricScaper.CallUrl(url).Result;
+            var response = _lyricScaper.CallUrl(songUrl).Result;
             string test = _lyricScaper.ParseHTML(response);
             _log.LogInformation("got the line here boss - {test}", test);
             //Tweet the line!
