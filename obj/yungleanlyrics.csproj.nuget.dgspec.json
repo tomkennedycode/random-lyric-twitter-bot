@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Tom-s\\Github\\yungleanlyrics\\yungleanlyrics.csproj": {}
+    "D:\\Tom-s\\Github\\random-lyric-twitter-bot\\yungleanlyrics.csproj": {}
   },
   "projects": {
-    "D:\\Tom-s\\Github\\yungleanlyrics\\yungleanlyrics.csproj": {
+    "D:\\Tom-s\\Github\\random-lyric-twitter-bot\\yungleanlyrics.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Tom-s\\Github\\yungleanlyrics\\yungleanlyrics.csproj",
+        "projectUniqueName": "D:\\Tom-s\\Github\\random-lyric-twitter-bot\\yungleanlyrics.csproj",
         "projectName": "yungleanlyrics",
-        "projectPath": "D:\\Tom-s\\Github\\yungleanlyrics\\yungleanlyrics.csproj",
+        "projectPath": "D:\\Tom-s\\Github\\random-lyric-twitter-bot\\yungleanlyrics.csproj",
         "packagesPath": "C:\\Users\\Tom-s\\.nuget\\packages\\",
-        "outputPath": "D:\\Tom-s\\Github\\yungleanlyrics\\obj\\",
+        "outputPath": "D:\\Tom-s\\Github\\random-lyric-twitter-bot\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -43,9 +43,21 @@
               "target": "Package",
               "version": "[1.11.33, )"
             },
-            "IronWebScraper": {
+            "Microsoft.Extensions.Hosting": {
               "target": "Package",
-              "version": "[4.0.4.3, )"
+              "version": "[6.0.0-preview.3.21201.4, )"
+            },
+            "Serilog.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[4.1.2, )"
+            },
+            "Serilog.Settings.Configuration": {
+              "target": "Package",
+              "version": "[3.2.0-dev-00266, )"
+            },
+            "Serilog.Sinks.Console": {
+              "target": "Package",
+              "version": "[4.0.0-dev-00839, )"
             },
             "System.Linq": {
               "target": "Package",
