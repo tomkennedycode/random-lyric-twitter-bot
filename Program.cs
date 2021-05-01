@@ -32,6 +32,7 @@ namespace yungleanlyrics {
                 .ConfigureServices((context, services) => {
                     services.AddTransient<IStartService, StartService>();
                     services.AddTransient<ILyricScraperService, LyricScraperService>();
+                    services.AddTransient<ITweetService, TweetService>();
                 })
                 .UseSerilog()
                 .Build();

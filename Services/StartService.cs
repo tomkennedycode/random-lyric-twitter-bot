@@ -9,10 +9,12 @@ namespace yungleanlyrics.Services
         private readonly ILogger<StartService> _log;
         private readonly IConfiguration _config;
         private readonly ILyricScraperService _lyricScaper;
-        public StartService (ILogger<StartService> log, IConfiguration config, ILyricScraperService lyricScraper) {
+        private readonly ITweetService _tweetService;
+        public StartService (ILogger<StartService> log, IConfiguration config, ILyricScraperService lyricScraper, ITweetService tweetService) {
             _log = log;
             _config = config;
             _lyricScaper = lyricScraper;
+            _tweetService = tweetService;
         }
         public void Run ()
         {
@@ -23,10 +25,11 @@ namespace yungleanlyrics.Services
 
             //Scrap the urls
             var response = _lyricScaper.CallUrl(songUrl).Result;
-            string test = _lyricScaper.ParseHTML(response);
-            _log.LogInformation("got the line here boss - {test}", test);
-            //Tweet the line!
+            string lyric = _lyricScaper.ParseHTML(response);
+            _log.LogInformation("got the line here boss - {test}", lyric);
 
+            //Tweet the line!
+            var resp = _tweetService.Tweet(lyric);
         }
     }
 }
