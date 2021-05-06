@@ -8,6 +8,9 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Configuration;
 using yungleanlyrics.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using yungleanlyrics.Models;
 
 namespace yungleanlyrics.Services
 {
@@ -33,13 +36,41 @@ namespace yungleanlyrics.Services
                 { "trim_user", "1" }
             };
 
-            return SendRequest("statuses/update.json", request);
+            return SendRequest($"{TwitterApiBaseUrl}statuses/update.json", request);
         }
 
-        Task<string> SendRequest(string url, Dictionary<string, string> data)
+        public bool ShouldTweet()
         {
-            var fullUrl = TwitterApiBaseUrl + url;
+            string twitterUsername = _config.GetValue<string>("TwitterUsername");
+            string fullUrl = $"https://api.twitter.com/2/tweets/search/recent?query=from:{twitterUsername}&tweet.fields=created_at&expansions=author_id&user.fields=created_at";
+            try
+            {
+                using (var http = new HttpClient())
+                {
+                    http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _config.GetValue<string>("BearerToken"));
+                    var httpResponse = http.GetAsync(fullUrl).Result;
+                    var responseBody = httpResponse.Content.ReadAsStringAsync().Result;
 
+                    TweetData twitterData = JsonConvert.DeserializeObject<TweetData>(responseBody);
+
+                    DateTime mostRecentTweet = twitterData.data.Max(x => x.created_at);
+
+                    if (mostRecentTweet.Date == DateTime.Today) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            } 
+            catch (Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        Task<string> SendRequest(string fullUrl, Dictionary<string, string> data)
+        {
             // Timestamps are in seconds since 1/1/1970.
             var timestamp = (int)((DateTime.UtcNow - dateTime).TotalSeconds);
 
@@ -59,8 +90,7 @@ namespace yungleanlyrics.Services
 
             // Build the form data (exclude OAuth stuff that's already in the header).
             var formData = new FormUrlEncodedContent(data.Where(kvp => !kvp.Key.StartsWith("oauth_")));
-
-            return SendRequest(fullUrl, oAuthHeader, formData);
+            return SendPOSTRequest(fullUrl, oAuthHeader, formData);
         }
 
         string GenerateSignature(string url, Dictionary<string, string> data)
@@ -94,7 +124,7 @@ namespace yungleanlyrics.Services
             );
         }
 
-        async Task<string> SendRequest(string fullUrl, string oAuthHeader, FormUrlEncodedContent formData)
+        async Task<string> SendPOSTRequest(string fullUrl, string oAuthHeader, FormUrlEncodedContent formData)
         {
             using (var http = new HttpClient())
             {
@@ -106,6 +136,5 @@ namespace yungleanlyrics.Services
                 return responseBody;
             }
         }
-
     }
 }

@@ -18,18 +18,23 @@ namespace yungleanlyrics.Services
         }
         public void Run ()
         {
-            // Get list of songs
-            string url = "https://www.azlyrics.com/y/yunglean.html";
-            var listOfSongsHtml = _lyricScaper.CallUrl(url).Result;
-            var songUrl = _lyricScaper.GetSongLink(listOfSongsHtml);
+            if (_tweetService.ShouldTweet()) 
+            {
+                // Get list of songs
+                string url = "https://www.azlyrics.com/y/yunglean.html";
+                var listOfSongsHtml = _lyricScaper.CallUrl(url).Result;
+                var songUrl = _lyricScaper.GetSongLink(listOfSongsHtml);
 
-            //Scrap the urls
-            var response = _lyricScaper.CallUrl(songUrl).Result;
-            string lyric = _lyricScaper.ParseHTML(response);
-            _log.LogInformation("got the line here boss - {test}", lyric);
+                //Scrap the urls
+                var scraperResponse = _lyricScaper.CallUrl(songUrl).Result;
+                string lyric = _lyricScaper.ParseHTML(scraperResponse);
+                _log.LogInformation("got the line here boss - {test}", lyric);
 
-            //Tweet the line!
-            var resp = _tweetService.Tweet(lyric);
+                //Tweet the line as the bot hasnt tweeted today
+                var tweetResponse = _tweetService.Tweet(lyric);
+            } else {
+                _log.LogInformation("the bot has already tweeted today so lets skip this one");
+            }
         }
     }
 }
