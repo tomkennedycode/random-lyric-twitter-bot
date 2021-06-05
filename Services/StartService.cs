@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using yungleanlyrics.Interfaces;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace yungleanlyrics.Services
 {
@@ -18,22 +19,34 @@ namespace yungleanlyrics.Services
         }
         public void Run ()
         {
-            if (_tweetService.ShouldTweet()) 
-            {
-                // Get list of songs
-                string url = "https://www.azlyrics.com/y/yunglean.html";
-                var listOfSongsHtml = _lyricScaper.CallUrl(url).Result;
-                var songUrl = _lyricScaper.GetSongLink(listOfSongsHtml);
+            try {
+                _log.LogInformation("checking if bot is allowed to tweet...");
 
-                //Scrap the urls
-                var scraperResponse = _lyricScaper.CallUrl(songUrl).Result;
-                string lyric = _lyricScaper.ParseHTML(scraperResponse);
-                _log.LogInformation("got the line here boss - {test}", lyric);
+                while(_tweetService.ShouldTweet()) {
+                    
+                    _log.LogInformation("bot has been given permission to tweet");
 
-                //Tweet the line as the bot hasnt tweeted today
-                var tweetResponse = _tweetService.Tweet(lyric);
-            } else {
-                _log.LogInformation("the bot has already tweeted today so lets skip this one");
+                    // Get list of songs
+                    var listOfSongsHtml = _lyricScaper.CallUrl(_config.GetValue<string>("LyricsUrl")).Result;
+                    var songUrl = _lyricScaper.GetSongLink(listOfSongsHtml);
+                    _log.LogInformation("scraper has chosen this song - {songUrl}", songUrl);
+
+                    //Scrap the urls
+                    var scraperResponse = _lyricScaper.CallUrl(songUrl).Result;
+                    string lyric = _lyricScaper.ParseHTML(scraperResponse);
+                    _log.LogInformation("the line is ready to be tweeted - {lyric}", lyric);
+
+                    //Tweet the line as the bot hasnt tweeted today
+                    if (lyric != string.Empty) {
+                        var tweetResponse = _tweetService.Tweet(lyric);
+                        _log.LogInformation("tweet has been sent");
+                    }
+                }
+
+            } catch (Exception exception) {
+                _log.LogInformation("bot ran into problem, message - {errorMessage}", exception.Message);
+            } finally {
+                _log.LogInformation("ending startservice");
             }
         }
     }

@@ -51,6 +51,11 @@ namespace yungleanlyrics.Services
             string[] linesInSong = song.Split("\n");
             var randomLine = GetRandomValueFromString(linesInSong);
 
+            // Sometimes it scrapes lines in the page that are just [Hook: ] or [Artist Name: ]
+            if (randomLine.StartsWith("[") && randomLine.EndsWith("]")) {
+                return string.Empty;
+            }
+
             return $"{randomLine} [{songAndAlbum}]";
         }
 
