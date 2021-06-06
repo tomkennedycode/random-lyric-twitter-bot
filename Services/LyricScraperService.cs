@@ -52,7 +52,7 @@ namespace yungleanlyrics.Services
             var randomLine = GetRandomValueFromString(linesInSong);
 
             // Sometimes it scrapes lines in the page that are just [Hook: ] or [Artist Name: ]
-            if (randomLine.StartsWith("[") && randomLine.EndsWith("]")) {
+            if ((randomLine.StartsWith("[") && randomLine.EndsWith("]")) || randomLine == string.Empty) {
                 return string.Empty;
             }
 
