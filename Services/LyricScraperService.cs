@@ -8,6 +8,7 @@ using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration;
 using yungleanlyrics.Interfaces;
 using Microsoft.Extensions.Logging;
+using yungleanlyrics.Models;
 
 namespace yungleanlyrics.Services
 {
@@ -28,7 +29,7 @@ namespace yungleanlyrics.Services
             return await response;
         }
 
-        public string ParseHTML(string html) {
+        public Song ParseHTML(string html) {
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
 
@@ -40,23 +41,31 @@ namespace yungleanlyrics.Services
             var titleName = title.Select(x => x.InnerText.Trim()).ToList ();
             var contents = songDiv.Select(x => x.InnerText.Trim()).ToList ();
 
+            Song songDetails = new Song();
+            songDetails.ArtistName = _config.GetValue<string>("ArtistName");
+
             string songAndAlbum = string.Empty;
+            songDetails.SongName = titleName[1];
+
             if (titleName.ElementAtOrDefault(2) != null) {
-                songAndAlbum = Regex.Replace($"{titleName[1]} - {titleName[2]}", "[^-0-9A-Za-z ]", "", RegexOptions.Compiled);
+                songDetails.AlbumName = titleName[2];
+                songAndAlbum = Regex.Replace($"{songDetails.SongName} - {songDetails.AlbumName}", "[^-0-9A-Za-z ]", "", RegexOptions.Compiled);
             } else {
-                songAndAlbum = Regex.Replace($"{titleName[1]}", "[^-0-9A-Za-z ]", "", RegexOptions.Compiled);
+                songAndAlbum = Regex.Replace($"{songDetails.SongName}", "[^-0-9A-Za-z ]", "", RegexOptions.Compiled);
             }
 
             var song = contents.OrderByDescending(s => s.Length).First();
             string[] linesInSong = song.Split("\n");
-            var randomLine = GetRandomValueFromString(linesInSong);
+            songDetails.SelectedLyrics = GetRandomValueFromString(linesInSong);
 
             // Sometimes it scrapes lines in the page that are just [Hook: ] or [Artist Name: ]
-            if ((randomLine.StartsWith("[") && randomLine.EndsWith("]")) || randomLine == string.Empty) {
-                return string.Empty;
+            if ((songDetails.SelectedLyrics.StartsWith("[") && songDetails.SelectedLyrics.EndsWith("]")) || songDetails.SelectedLyrics == string.Empty) {
+                songDetails.SelectedLyrics = string.Empty;
+            } else {
+                songDetails.SelectedLyrics = $"{songDetails.SelectedLyrics} [{songAndAlbum}]"; 
             }
 
-            return $"{randomLine} [{songAndAlbum}]";
+            return songDetails;
         }
 
         public string GetSongLink(string html)

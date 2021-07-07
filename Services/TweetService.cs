@@ -39,6 +39,17 @@ namespace yungleanlyrics.Services
             return SendRequest($"{TwitterApiBaseUrl}statuses/update.json", request);
         }
 
+        public Task<string> TweetReply(string tweetId, string text)
+        {
+            var request = new Dictionary<string, string> {
+                { "in_reply_to_status_id", tweetId.ToString()},
+                { "status", $"@{_config.GetValue<string>("TwitterUsername")} {text}" },
+                { "trim_user", "1" }
+            };
+
+            return SendRequest($"{TwitterApiBaseUrl}statuses/update.json", request);
+        }
+
         public bool ShouldTweet()
         {
             string twitterUsername = _config.GetValue<string>("TwitterUsername");

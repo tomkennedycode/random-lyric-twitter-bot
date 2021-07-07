@@ -33,6 +33,7 @@ namespace yungleanlyrics {
                     services.AddTransient<IStartService, StartService>();
                     services.AddTransient<ILyricScraperService, LyricScraperService>();
                     services.AddTransient<ITweetService, TweetService>();
+                    services.AddTransient<IYoutubeService, YoutubeService>();
                 })
                 .UseSerilog()
                 .Build();

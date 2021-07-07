@@ -2,6 +2,8 @@ using Microsoft.Extensions.Configuration;
 using yungleanlyrics.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
+using yungleanlyrics.Models;
+using Newtonsoft.Json.Linq;
 
 namespace yungleanlyrics.Services
 {
@@ -11,11 +13,17 @@ namespace yungleanlyrics.Services
         private readonly IConfiguration _config;
         private readonly ILyricScraperService _lyricScaper;
         private readonly ITweetService _tweetService;
-        public StartService (ILogger<StartService> log, IConfiguration config, ILyricScraperService lyricScraper, ITweetService tweetService) {
+        private readonly IYoutubeService _youtubeService;
+        public StartService (ILogger<StartService> log,
+                            IConfiguration config,
+                            ILyricScraperService lyricScraper,
+                            ITweetService tweetService,
+                            IYoutubeService youtubeService) {
             _log = log;
             _config = config;
             _lyricScaper = lyricScraper;
             _tweetService = tweetService;
+            _youtubeService = youtubeService;
         }
         public void Run ()
         {
@@ -37,18 +45,32 @@ namespace yungleanlyrics.Services
 
                         //Scrap the urls
                         var scraperResponse = _lyricScaper.CallUrl(songUrl).Result;
-                        string lyric = _lyricScaper.ParseHTML(scraperResponse);
-                        _log.LogInformation("the line is ready to be tweeted - {lyric}", lyric);
+                        Song song = _lyricScaper.ParseHTML(scraperResponse);
+                        _log.LogInformation("the line is ready to be tweeted - {lyric}", song.SelectedLyrics);
 
                         //Tweet the line if we haven't detected any false lyrics
-                        if (lyric != string.Empty) {
-                            var tweetResponse = _tweetService.Tweet(lyric);
+                        if (song.SelectedLyrics != string.Empty) {
+                            var tweetResponse = _tweetService.Tweet(song.SelectedLyrics);
                             _log.LogInformation("tweet has been sent");
+
+                            // Get youtube url of tweeted song
+                            string youtubeUrl = _youtubeService.GetSongURL($"{song.ArtistName} {song.SongName}");
+                            _log.LogInformation("youtube url has been retrieved - ", youtubeUrl);
+
+                            // Get ID of lyric tweet so we can reply with youtube url
+                            var parsedStuff = JObject.Parse(tweetResponse.Result);
+                            var tweetID = parsedStuff["id_str"].ToString();
+
+                            // Reply to original lyric tweet with url
+                            var tweetReply = _tweetService.TweetReply(tweetID, youtubeUrl);
+                            _log.LogInformation("reply tweet has been sent");
                             hasTweeted = true;
                         } else {
                             maximumAttempts -= 1;
                         }
                     }
+                } else {
+                    _log.LogInformation("the bot has already tweeted today.");
                 }
                 
 
